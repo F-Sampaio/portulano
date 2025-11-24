@@ -1,0 +1,28 @@
+.trip-card {
+  background: var(--color-surface);
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-3);
+}
+.trip-card__title { font-weight: 700; margin-bottom: 4px; }
+.trip-card__meta { color: var(--color-muted); font-size: .92rem; }
+.trip-card__actions { display:flex; gap: var(--space-2); align-self: end; }
+
+.badge {
+  align-self: start;
+  padding: 4px 8px; border-radius: 999px; font-size: .78rem; border: 1px solid #e5e7eb;
+  color: #374151; background:#f9fafb;
+}
+.badge--ideia        { background:#fdf2f8; border-color:#fbcfe8; color:#9d174d; }
+.badge--planejada    { background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8; }
+.badge--em-andamento { background:#ecfeff; border-color:#a5f3fc; color:#155e75; }
+.badge--concluida    { background:#ecfdf5; border-color:#a7f3d0; color:#065f46; }
+
+@media (max-width: 768px) {
+  .trip-card { grid-template-columns: 1fr; }
+  .trip-card__actions { flex-direction: column; }
+  .trip-card__actions .btn { width: 100%; }
+}

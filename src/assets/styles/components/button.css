@@ -1,0 +1,56 @@
+/* Base */
+.btn {
+  --_bg: var(--btn-primary-bg);
+  --_bg-hover: var(--btn-primary-bg-hover);
+  --_fg: var(--btn-primary-fg);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  border: 0;
+  background: var(--_bg);
+  color: var(--_fg);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease, transform .02s ease, opacity .15s ease;
+}
+.btn:hover { background: var(--_bg-hover); color: var(--_fg); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+
+/* Foco visível (acessibilidade) */
+.btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Variante NEUTRA — fundo claro c/ texto escuro (use quando o botão aparece sobre superfícies escuras e você quer um CTA "suave") */
+.btn--neutral {
+  --_bg: var(--btn-neutral-bg);
+  --_bg-hover: var(--btn-neutral-bg-hover);
+  --_fg: var(--btn-neutral-fg);
+}
+
+/* Variante OUTLINE — sem preencher, bom em cards escuros */
+.btn--outline {
+  background: transparent;
+  color: var(--outline-fg, var(--btn-primary-fg));
+  border: 1px solid var(--btn-outline-border);
+}
+.btn--outline:hover {
+  background: rgba(99, 102, 241, 0.12); /* indigo-500 @ 12% */
+  color: var(--btn-outline-fg);
+}
+
+/* Variante GHOST — só texto, hover sutil */
+.btn--ghost {
+  background: transparent;
+  color: var(--color-primary);
+}
+.btn--ghost:hover {
+  background: rgba(79, 70, 229, 0.10);
+  color: var(--color-primary);
+}
