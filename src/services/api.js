@@ -82,5 +82,20 @@ export async function joinTripByCode(code) {
   return res.data
 }
 
+export async function downloadTripPdf(tripId) {
+  const res = await api.get(`/trips/${tripId}/export`, {
+    responseType: 'blob',
+  })
+  const blob = new Blob([res.data], { type: 'application/pdf' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `viagem-${tripId}.pdf`
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+
 
 export default api

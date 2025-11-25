@@ -3,12 +3,14 @@
   <section v-if="trip" class="stack container">
     <header class="stack">
       <small><RouterLink to="/">← Voltar</RouterLink></small>
-      <!-- backend usa "title", não "name" -->
       <h2>{{ trip.title || 'Viagem' }}</h2>
       <p class="card__meta">
         <strong>Início:</strong> {{ start }} ·
         <strong>Status:</strong> {{ labelStatus }} ·
       </p>
+      <div>
+        <button type="button" class="btn btn--ghost btn--sm" @click="exportPdf">Exportar PDF</button>
+  </div>
     </header>
 
     <!-- Descrição -->
@@ -275,6 +277,7 @@ import {
   updateDay,
   deleteDay,
   createInvite,
+  downloadTripPdf,
 } from '../services/api'
 
 import { fmt } from '../utils/date'
@@ -475,6 +478,12 @@ async function saveDayModal() {
   trip.value = await getTrip(route.params.id)
   closeDayModal()
 }
+
+async function exportPdf() {
+  if (!trip.value) return
+  await downloadTripPdf(trip.value.id)
+}
+
 
 async function deleteCurrentDay() {
   if (!trip.value || !editingDay.value) return
