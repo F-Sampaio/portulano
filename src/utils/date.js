@@ -5,8 +5,11 @@ export function fmt(dateStr) {
     return `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${y}`
   }
   const [y, m, d] = dateStr.split('-')
-  return `${d}/${m}/${y}`
+  const dd = d.padStart(2, '0')
+  const mm = m.padStart(2, '0')
+  return `${dd}/${mm}/${y}`
 }
+
 
 export function formatBR(dateStr) {
   return fmt(dateStr)
