@@ -8,7 +8,7 @@
         <select v-model="newStatus" required>
           <option value="planejada">Planejada</option>
           <option value="ideia">Ideia</option>
-          <option value="em-andamento">Em andamento</option>
+          <option value="em_andamento">Em andamento</option>
           <option value="concluida">Concluída</option>
         </select>
         <button type="submit" class="btn" :disabled="!auth.isAdmin">Criar</button>
@@ -25,7 +25,7 @@
         <!-- <option value="">Status (todos)</option> -->
         <option value="ideia">Ideia</option>
         <option value="planejada">Planejada</option>
-        <option value="em-andamento">Em andamento</option>
+        <option value="em_andamento">Em andamento</option>
         <option value="concluida">Concluída</option>
       </select>
     </div>

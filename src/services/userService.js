@@ -14,3 +14,18 @@ export async function getCurrentUser() {
   const response = await api.get('/me')
   return response.data
 }
+
+export async function updateName(payload) {
+  const response = await api.patch('/me/name', payload)
+  return response.data
+}
+
+export async function updateEmail(payload) {
+  const response = await api.patch('/me/email', payload)
+  return response.data
+}
+
+export async function updatePassword(payload) {
+  const response = await api.patch('/me/password', payload)
+  return response.data
+}

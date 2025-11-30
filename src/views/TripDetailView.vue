@@ -6,8 +6,24 @@
       <h2>{{ trip.title || 'Viagem' }}</h2>
       <p class="card__meta">
         <strong>Início:</strong> {{ start }} ·
-        <strong>Status:</strong> {{ labelStatus }} ·
+        <strong>Status:</strong>
+        <span v-if="!canEdit">
+          {{ labelStatus }}
+        </span>
+        <select
+          v-else
+          v-model="statusDraft"
+          @change="changeStatus"
+          class="input input--sm"
+        >
+          <option value="ideia">Ideia</option>
+          <option value="planejada">Planejada</option>
+          <option value="em_andamento">Em andamento</option>
+          <option value="concluida">Concluída</option>
+        </select>
+        ·
       </p>
+
       <div>
         <button type="button" class="btn btn--ghost btn--sm" @click="exportPdf">Exportar PDF</button>
   </div>
@@ -18,7 +34,6 @@
       <h2>Descrição</h2>
 
       <div class="desc">
-        <!-- Ícone lápis (aparece só quando NÃO está editando) -->
         <button
           v-if="canEdit && !isEditingDesc"
           class="icon-btn"
@@ -88,17 +103,27 @@
     </section>
 
     <!-- Checklist da viagem -->
-    <div v-if="trip.checklist?.length" class="stack">
-      <ChecklistItem v-for="i in trip.checklist" :key="i.id" v-model="i.done" @update:modelValue="toggle(i)">
-        <span v-if="editingChecklistId !== i.id"> {{ i.label }} </span>
-        <input v-else v-model.trim="editingChecklistLabel" type="text" class="input input--sm"/>
-        <button v-if="canEdit && editingChecklistId !== i.id" type="button" class="btn btn--ghost btn--sm" @click.stop="startEditChecklist(i)">Editar</button>
-        <button v-if="canEdit && editingChecklistId === i.id" type="button" class="btn btn--ghost btn--sm" @click.stop="cancelEditChecklist">Cancelar</button>
-        <button v-if="canEdit && editingChecklistId === i.id" type="button" class="btn btn--sm" @click.stop="saveEditChecklist(i)">Salvar</button>
-        <button v-if="canEdit" type="button" class="btn btn--ghost btn--sm" @click.stop="removeChecklist(i)">Remover</button>
-      </ChecklistItem>
-    </div>
-    <p v-else class="card__meta">Nenhum item ainda.</p>
+    <section class="stack">
+      <h3>Checklist</h3>
+      <form class="stack stack--row" @submit.prevent="addItem" v-if="canEdit">
+        <input v-model.trim="newItem" type="text" placeholder="Adicionar item (ex.: Seguro Carta Verde)"/>
+        <button class="btn" :disabled="!newItem">Adicionar</button>
+      </form>
+
+      <div v-if="trip.checklist?.length" class="stack">
+        <ChecklistItem v-for="i in trip.checklist" :key="i.id" v-model="i.done" @update:modelValue="toggle(i)">
+          <span v-if="editingChecklistId !== i.id">
+            {{ i.label }}
+          </span>
+          <input v-else v-model.trim="editingChecklistLabel" type="text" class="input input--sm" />
+          <button v-if="canEdit && editingChecklistId !== i.id" type="button" class="btn btn--ghost btn--sm" @click.stop="startEditChecklist(i)">Editar</button>
+          <button v-if="canEdit && editingChecklistId === i.id" type="button" class="btn btn--ghost btn--sm" @click.stop="cancelEditChecklist">Cancelar</button>
+          <button v-if="canEdit && editingChecklistId === i.id" type="button" class="btn btn--sm" @click.stop="saveEditChecklist(i)">Salvar</button>
+          <button v-if="canEdit" type="button" class="btn btn--ghost btn--sm" @click.stop="removeChecklist(i)">Remover</button>
+        </ChecklistItem>
+      </div>
+      <p v-else class="card__meta">Nenhum item ainda.</p>
+    </section>
 
 
     <!-- Dias / Roteiro -->
@@ -264,7 +289,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   getTrip,
@@ -285,9 +310,11 @@ import ChecklistItem from '../components/ChecklistItem.vue'
 import { useAuthStore } from '../stores/auth'
 
 
-const route = useRoute()
 const trip = ref(null)
+const route = useRoute()
 const auth = useAuthStore()
+const statusDraft = ref('')
+
 
 // checklist
 const newItem = ref('')
@@ -330,6 +357,14 @@ const labelStatus = computed(() => {
 })
 
 const canEdit = computed(() => !!trip.value?.canEdit)
+
+watch(
+  () => trip.value?.status,
+  (s) => {
+    statusDraft.value = s || 'ideia'
+  },
+  { immediate: true },
+)
 
 onMounted(async () => {
   trip.value = await getTrip(route.params.id)
@@ -374,6 +409,14 @@ async function saveDesc() {
   })
   trip.value = updated
   isEditingDesc.value = false
+}
+
+async function changeStatus() {
+  if (!trip.value) return
+  const updated = await updateTrip(trip.value.id, {
+    status: statusDraft.value,
+  })
+  trip.value = updated
 }
 
 async function toggle(i) {
